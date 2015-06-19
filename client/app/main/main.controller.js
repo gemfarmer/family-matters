@@ -1,17 +1,23 @@
 'use strict';
 
 angular.module('familyTreeApp')
-  .controller('MainCtrl', function ($scope, $http) {
+  .controller('MainCtrl', function ($scope, $http, $window) {
     $scope.awesomeThings = [];
 
     $http.get('/api/things').success(function(awesomeThings) {
       $scope.awesomeThings = awesomeThings;
     });
 
+    console.log($window)
 
+    $scope.showName = function(d){
+    	console.log('showName', d)
+    }
+    $scope.selectedPerson = {};
+    $scope.hoveredName = 'hoveredName';
 
     var margin = 20,
-    diameter = 960;
+    diameter = $window.outerWidth < 960 ? $window.outerWidth : 960;
 
 var color = d3.scale.linear()
     .domain([-1, 5])
@@ -41,8 +47,15 @@ $http.get('/api/bubbles').success(function(root) {
       .data(nodes)
     .enter().append("circle")
       .attr("class", function(d) { return d.parent ? d.children ? "node" : "node node--leaf" : "node node--root"; })
+      // .on("mouseover",function(d){ console.log(d); $scope.hoveredName = d.name; $scope.$apply(); d3.event.stopPropagation();})
       .style("fill", function(d) { return d.children ? color(d.depth) : null; })
-      .on("click", function(d) { if (focus !== d) zoom(d), d3.event.stopPropagation(); });
+      .on("click", function(d) { 
+      	if (d.parent && !d.children){updateName(d); d3.event.stopPropagation();} else {
+      		if (focus !== d) zoom(d), d3.event.stopPropagation(); 
+      	}
+      	
+      	console.log('yo')
+      });
 
   var text = svg.selectAll("text")
       .data(nodes)
@@ -60,9 +73,17 @@ $http.get('/api/bubbles').success(function(root) {
 
   zoomTo([root.x, root.y, root.r * 2 + margin]);
 
+  function updateName(d){
+  	$scope.hoveredName = d.name;
+  	$scope.selectedPerson = d;
+    $scope.$apply();
+    console.log(d)
+  }
+
   function zoom(d) {
     var focus0 = focus; focus = d;
-
+    //update name
+    updateName(d);
     var transition = d3.transition()
         .duration(d3.event.altKey ? 7500 : 750)
         .tween("zoom", function(d) {
@@ -82,6 +103,8 @@ $http.get('/api/bubbles').success(function(root) {
     node.attr("transform", function(d) { return "translate(" + (d.x - v[0]) * k + "," + (d.y - v[1]) * k + ")"; });
     circle.attr("r", function(d) { return d.r * k; });
   }
+  $scope.hoveredName = nodes[0].name;
+  $scope.selectedPerson = nodes[0];
 });
 
 d3.select(self.frameElement).style("height", diameter + "px");

@@ -1,4 +1,4 @@
-<div ng-include="'components/navbar/navbar.html'"></div>
+<!-- <div ng-include="'components/navbar/navbar.html'"></div> -->
 
 <!-- <header class="hero-unit" id="banner">
   <div class="container">
@@ -19,10 +19,20 @@
   </div>
 </div>
  -->
-<footer class="footer">
+<!-- footer class="footer">
   <div class="container">
       <p>Angular Fullstack v2.0.13 |
         <a href="https://twitter.com/tyhenkel">@tyhenkel</a> |
          <a href="https://github.com/DaftMonk/generator-angular-fullstack/issues?state=open">Issues</a></p>
   </div>
-</footer>
+</footer> -->
+<div class="info-text">
+  <h2>Swedish/American Connection</h2>
+  <!-- <h3>Parent: <b>{{hoveredName}}</b></h3> -->
+  <h3>Selected: <b>{{selectedPerson.name}}</b></h3>
+  <hr>
+  <h3 ng-if="selectedPerson.birth && selectedPerson.death">{{selectedPerson.birth}} – {{selectedPerson.death}}</h3>
+  <div ng-if="selectedPerson.spouses"><h3>Spouses:</h3> <hr><h4 ng-repeat="spouse in selectedPerson.spouses">{{spouse}}<span ng-if="!$last">, <br></span></h4></div>
+  <div ng-if="selectedPerson.children"><h3>Children:</h3> <hr><h4 ng-repeat="child in selectedPerson.children">{{child.name}}<span ng-if="!$last">, <br></span></h4></div>
+  <div ng-if="selectedPerson.parent"><h3>Parents:</h3> <hr><h4>{{selectedPerson.parent.name}}<br>{{selectedPerson.otherParent}}</h4></div>
+<div>
